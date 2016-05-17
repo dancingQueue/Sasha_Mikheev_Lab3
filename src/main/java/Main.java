@@ -84,8 +84,15 @@ public class Main {
         while (a.hasPrevious()) {
             System.out.println(a.previous());
         }
+        System.out.println("New List");
+        DoubleLinkedList<String> newList = testList.map(new Function<Integer, String>() {
+            @Override
+            public String apply(Integer integer) {
+                return integer.toString() + " we finally map our list! GRATZ!";
+            }
+        });
 
-
+        newList.testPrint();
 
     }
 

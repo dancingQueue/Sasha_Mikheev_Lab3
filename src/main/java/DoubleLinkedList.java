@@ -51,6 +51,18 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
         return tempIterator;
     }
 
+    public <OUT extends Comparable<? super OUT>> DoubleLinkedList<OUT> map(Function<Item, OUT> currentFunctionObject) {
+        DoubleLinkedList<OUT> newList = new DoubleLinkedList<OUT>();
+
+        Node tempNode = first;
+        for (int index = 0; index < size; index++) {
+            OUT tempValue = currentFunctionObject.apply(tempNode.item);
+            tempNode = tempNode.next;
+            newList.add(tempValue);
+        }
+        return newList;
+    }
+
     public TwoWayIterator<Item> getTwoWayIterator() {
         return new DoubleLinkedListIterator();
     }
