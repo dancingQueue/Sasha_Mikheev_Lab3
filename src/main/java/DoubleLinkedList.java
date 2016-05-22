@@ -1,6 +1,7 @@
 import interfaces.TwoWayIterable;
 import interfaces.TwoWayIterator;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /**
@@ -10,7 +11,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
 
     private int size;
     private Node first;
-
+    private int modCount;
 
     private class Node {
         private Item item;
@@ -27,7 +28,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
 
             private int currentIndex = 0;
             private Node currentNode = first;
-
+            private int expectedModCount = modCount;
             @Override
             public boolean hasNext() {
                 return currentIndex < size;
@@ -35,6 +36,10 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
 
             @Override
             public Item next() {
+                checkForComodification();
+                if (!hasNext()) {
+                    throw new IndexOutOfBoundsException();
+                }
                 Item returnValue = currentNode.item;
                 currentNode = currentNode.next;
                 currentIndex++;
@@ -43,7 +48,11 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
 
             @Override
             public void remove() {
-                return;
+                throw new UnsupportedOperationException();
+            }
+            final void checkForComodification() {
+                if (modCount != expectedModCount)
+                    throw new ConcurrentModificationException();
             }
 
 
@@ -80,6 +89,9 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
         }
 
         public Item next() {
+            if (!hasNext()) {
+                throw new IndexOutOfBoundsException();
+            }
             Item returnValue = currentNode.item;
             currentNode = currentNode.next;
             currentIndex++;
@@ -87,6 +99,9 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
         }
 
         public Item previous() {
+            if (!hasPrevious()) {
+                throw new IndexOutOfBoundsException();
+            }
             Item returnValue = currentNode.item;
             currentNode = currentNode.previous;
             currentIndex--;
@@ -94,12 +109,12 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
         }
         
         public void remove() {
-            return;
+            throw new UnsupportedOperationException();
         }
     }
 
     public void sort() {
-
+        modCount++;
         for (int i = 0; i < size - 1; i++) {
             for (int j = 0; j < size - i - 1; j++) {
                 Node currentNode = Entry(j);
@@ -135,7 +150,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
             first = newNode;
         }
         size++;
-
+        modCount++;
     }
 
     private Node Entry(int index) {
@@ -149,15 +164,25 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
 
     }
 
+    private boolean isIndexInRange(int index) {
+        return (index > 0 && index < size);
+    }
+
     public Item get(int index) {
+        if (!isIndexInRange(index)) {
+            throw new IndexOutOfBoundsException();
+        }
         return Entry(index).item;
     }
 
     public void add(int index, Item item) {
+        if (!isIndexInRange(index)) {
+            throw new IndexOutOfBoundsException();
+        }
+
         if (index == 0) {
             addFirst(item);
-        } else if (index < 0 || index > size) {
-            return;
+
         } else {
             Node oldNode = Entry(index);
             Node beforeOldNode = oldNode.previous;
@@ -170,7 +195,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
             oldNode.previous = newNode;
             beforeOldNode.next = newNode;
             size++;
-
+            modCount++;
         }
     }
 
@@ -198,12 +223,14 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
             first = secondNode;
             size--;
         }
+        modCount++;
     }
 
     public void delete(int index) {
-        if (index < 0 || index >= size) {
-            return;
-        } else if (index == 0) {
+        if (!isIndexInRange(index)) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
             removeFirst();
         } else {
             Node nodeToDelete = Entry(index);
@@ -214,6 +241,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
             previousNode.next = nextNode;
             nextNode.previous = previousNode;
             size--;
+            modCount++;
         }
     }
 
@@ -232,6 +260,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
             newNode.next = first;
             newNode.previous = tempNode;
             size++;
+            modCount++;
         }
     }
 
