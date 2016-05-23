@@ -1,6 +1,6 @@
 import interfaces.TwoWayIterator;
 
-import java.util.LinkedList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Created by alexandermiheev on 06.05.16.
@@ -9,7 +9,7 @@ public class Main {
 
 
     public static void testRoutine() {
-        DoubleLinkedList<Integer> testList = new DoubleLinkedList<Integer>();
+        DoubleLinkedList<Integer> testList = new DoubleLinkedList<>();
 
 
         System.out.println("Adding 0 to 4 elements in the beginning of the list");
@@ -86,8 +86,33 @@ public class Main {
         while (a.hasPrevious()) {
             System.out.println(a.previous());
         }
-        System.out.println("New List");
-        DoubleLinkedList<String> newList = testList.map(new Function<Integer, String>() {
+
+    }
+    public static void fillListWithElements(DoubleLinkedList<Integer> list, int sizeOfTheList) {
+        for (int i = 0; i < sizeOfTheList; i++) {
+            list.add(i);
+        }
+    }
+
+    public static void testConcurrencyModificationException(int size) {
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>();
+        fillListWithElements(list, size);
+
+        try {
+            for (Integer value: list) {
+                list.add(value);
+            }
+        } catch (ConcurrentModificationException e) {
+            System.out.print("You can't modify the list during iteration");
+        }
+
+    }
+
+    public static void testMapMethod(int size) {
+        DoubleLinkedList<Integer> list = new DoubleLinkedList<>();
+        fillListWithElements(list, size);
+
+        DoubleLinkedList<String> newList = list.map(new Function<Integer, String>() {
             @Override
             public String apply(Integer integer) {
                 return integer.toString() + " we finally map our list! GRATZ!";
@@ -95,16 +120,15 @@ public class Main {
         });
 
         newList.testPrint();
-
     }
+
+
 
     public static void main(String[] args) {
 
-        //testRoutine();
-        LinkedList<Integer> a = new LinkedList<Integer>();
-        a.add(1);
-        for (Integer temp: a) {
-            a.add(2);
-        }
+        testRoutine();
+        int sizeOfTheList = 10;
+        testConcurrencyModificationException(sizeOfTheList);
+        testMapMethod(sizeOfTheList);
     }
 }

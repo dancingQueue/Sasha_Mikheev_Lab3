@@ -61,7 +61,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
     }
 
     public <OUT extends Comparable<? super OUT>> DoubleLinkedList<OUT> map(Function<Item, OUT> currentFunctionObject) {
-        DoubleLinkedList<OUT> newList = new DoubleLinkedList<OUT>();
+        DoubleLinkedList<OUT> newList = new DoubleLinkedList<>();
 
         Node tempNode = first;
         for (int index = 0; index < size; index++) {
@@ -165,8 +165,9 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
     }
 
     private boolean isIndexInRange(int index) {
-        return (index > 0 && index < size);
+        return (index >= 0 && index < size);
     }
+    private boolean isIndexInRangeForAdding(int index) {return (index >= 0 && index <= size);}
 
     public Item get(int index) {
         if (!isIndexInRange(index)) {
@@ -176,7 +177,7 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
     }
 
     public void add(int index, Item item) {
-        if (!isIndexInRange(index)) {
+        if (!isIndexInRangeForAdding(index)) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -208,8 +209,8 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
     }
 
     public void removeFirst() {
-        if (size == 0) {
-            return;
+        if (!isIndexInRange(0)) {
+            throw new IndexOutOfBoundsException();
         } else if (size == 1) {
             size = 0;
             first = null;
@@ -248,7 +249,6 @@ public class DoubleLinkedList<Item extends Comparable<? super Item>> implements 
     public void add(Item item) {
         if (size == 0) {
             addFirst(item);
-            return;
         } else {
             Node tempNode = first.previous;
             Node newNode = new Node();
