@@ -1,6 +1,6 @@
 import interfaces.TwoWayIterator;
 
-import java.util.ConcurrentModificationException;
+import java.util.*;
 
 /**
  * Created by alexandermiheev on 06.05.16.
@@ -126,9 +126,36 @@ public class Main {
 
     public static void main(String[] args) {
 
-        testRoutine();
-        int sizeOfTheList = 10;
-        testConcurrencyModificationException(sizeOfTheList);
-        testMapMethod(sizeOfTheList);
+     //   testRoutine();
+     //   int sizeOfTheList = 10;
+     //   testConcurrencyModificationException(sizeOfTheList);
+     //   testMapMethod(sizeOfTheList);
+        HashMap<Integer, String> a = new HashMap<>();
+        a.put(null, "42");
+        System.out.println("got it");
+        HashSet<Integer> integerHashSet = new HashSet<>();
+        integerHashSet.add(null);
+        System.out.println("got it hashSet");
+
+        ArrayList<Integer> integerArrayList = new ArrayList<>();
+        integerArrayList.add(null);
+        System.out.println("got it arrayList");
+
+        LinkedList<Integer> integerLinkedList = new LinkedList<>();
+        integerLinkedList.add(null);
+        System.out.println("got it linkedList");
+
+        LinkedHashSet<Integer> integerLinkedHashSet = new LinkedHashSet<>();
+        integerLinkedHashSet.add(null);
+        System.out.println("got it linkedHashSet");
+
+        //TreeSet<Integer> integerTreeSet = new TreeSet<>();
+        //integerTreeSet.add(null);
+        //TreeMap<Integer, Integer> integerIntegerTreeMap = new TreeMap<>();
+        //integerIntegerTreeMap.put(null, 42);
+        //System.out.println("got it TreeMap");
+
+
+
     }
 }
